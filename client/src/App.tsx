@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   split,
   HttpLink,
@@ -8,23 +9,20 @@ import {
 import { getMainDefinition } from '@apollo/client/utilities';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
-import { useState } from 'react';
+
+import SendMessage from './components/SendMessage';
+import Chats from './components/Chats';
 
 const httpLink = new HttpLink({
-  uri: 'http://localhost:3000/graphql',
+  uri: 'http://localhost:5000/graphql',
 });
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: 'ws://localhost:3000/subscriptions',
+    url: 'ws://localhost:5000/graphql',
   })
 );
 
-// The split function takes three parameters:
-//
-// * A function that's called for each operation to execute
-// * The Link to use for an operation if the function returns a "truthy" value
-// * The Link to use for an operation if the function returns a "falsy" value
 const splitLink = split(
   ({ query }) => {
     const definition = getMainDefinition(query);
@@ -61,7 +59,12 @@ const App = () => {
           </div>
         )}
 
-        {name !== '' && entered && <div>Chats</div>}
+        {name !== '' && entered && (
+          <div>
+            <Chats />
+            <SendMessage name={name} />
+          </div>
+        )}
       </div>
     </ApolloProvider>
   );
